@@ -1,335 +1,218 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <meta charset="utf-8">
+<style>
 
-<head>
 
-<!-- load D3plus CSS -->
-  <link href="css/d3plus.css" media="screen" rel="stylesheet" type="text/css" />
-   <link rel="stylesheet" type="text/css" href="css/style.css">
+body {
+  font: 10px sans-serif;
+}
 
- <title>Ring Network Visualization</title>
- 
-  <!-- load D3js -->
-  <script type="text/javascript" src="js/d3.js"></script>
- 
-  <!-- load D3plus after D3js -->
-  <script src="js/d3plus.js"></script>
-</head>
+.chart { 
+  background: #fff;
+}
+
+p {
+  font: 12px helvetica;
+}
+
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+
+button {
+  position: absolute;
+  right: 50px;
+  top: 10px;
+}
+
+</style>
 <body>
-<div id="HeadImage"><img src="image/tennis.png" width="30" height="30" style="vertical-align:middle;" /></div>
-<div id="SideText">
-    
-  <p id="p0" class="sideTitle">DESCRIPTION</p>
-  <p id="p1" class="Side"></p>
-  <p id="p2" class="Side">This ring network visualization shows the matches played by Juan Martin Del Potro and his opponents in the 2009 US Open. </p> 
-  <p id="p3" class="Side"> Each node represents a player. The size of the node indicates the participation frequency of this player in the US Open from 2003 to 2009. It implies the familarity of this player with this tournament, such as the court condition and the climate. The color represents his experience, namely, the number of years since they turned pro. The darker the color, the more experienced he is.</p> 
-  <p id="p4" class="Side"> Mouse over each node for a detailed description of each player, including his basic information and who his opponents were. Click on each node to see his own ring network. The name of the "focus" player will appear larger than his network nodes. Click on the "CHAMPION" button to go back to Juan Martin Del Potro's ring network.</p>
- </div>
+<<script src="http://d3js.org/d3.v2.js"></script>
 
-<div id="FootImage"><br><img src="image/juan2.png" width="240" height="160" style="vertical-align:middle;" /></div>
 
-  
-
-<div id="owner">Analysis and Visualization created by <A HREF="mailto:ml3576@columbia.edu?SUBJECT=Ring Network Visualization">Mengying Li </A><br>
-Powered by <A HREF="http://d3js.org/">D3</A> and <A HREF="http://d3plus.org/">D3plus</A>
- </div>
-<div id="button">
-<FORM>
-<INPUT TYPE="button" class="fsSubmitButton" onClick="history.go(0)" VALUE="CHAMPION">
-</FORM>
+<div class="chart">
 </div>
 
+<<script>
 
-<div id="viz">
-<script>
+chart("FBDec.csv", "orange");
+
+var datearray = [];
+var colorrange = [];
 
 
-  var sample_data = [{"Id":"Fabrice Santoro","Hand":"Right","Weight":"74 kg","Height":"178 cm","Turned Pro":1989,"group":7,"greencolor":"#005a32","size":10,"Country":"France"},
-{"Id":"Alberto Martin","Hand":"Right","Weight":"73 kg","Height":"175 cm","Turned Pro":1995,"group":5,"greencolor":"#41ab5d","size":7,"Country":"Spain"},
-{"Id":"Andrei Pavel","Hand":"Right","Weight":"86 kg","Height":"183 cm","Turned Pro":1995,"group":5,"greencolor":"#41ab5d","size":7,"Country":"Romania"},
-{"Id":"Nicolas Kiefer","Hand":"Right","Weight":"80 kg","Height":"183 cm","Turned Pro":1995,"group":5,"greencolor":"#41ab5d","size":15,"Country":"Germany"},
-{"Id":"Nicolas Lapentti","Hand":"Right","Weight":"86 kg","Height":"188 cm","Turned Pro":1995,"group":5,"greencolor":"#41ab5d","size":6,"Country":"Ecuador"},
-{"Id":"Rainer Schuettler","Hand":"Right","Weight":"75 kg","Height":"180 cm","Turned Pro":1995,"group":5,"greencolor":"#41ab5d","size":9,"Country":"Germany"},
-{"Id":"Christophe Rochus","Hand":"Right","Weight":"68 kg","Height":"170 cm","Turned Pro":1996,"group":5,"greencolor":"#41ab5d","size":2,"Country":"Belgium"},
-{"Id":"Radek Stepanek","Hand":"Right","Weight":"76 kg","Height":"185 cm","Turned Pro":1996,"group":5,"greencolor":"#41ab5d","size":14,"Country":"Czech Republic"},
-{"Id":"Tommy Haas","Hand":"Right","Weight":"84 kg","Height":"188 cm","Turned Pro":1996,"group":5,"greencolor":"#41ab5d","size":23,"Country":"Germany"},
-{"Id":"Feliciano Lopez","Hand":"Left","Weight":"85 kg","Height":"188 cm","Turned Pro":1997,"group":5,"greencolor":"#41ab5d","size":10,"Country":"Spain"},
-{"Id":"Marat Safin","Hand":"Right","Weight":"88 kg","Height":"193 cm","Turned Pro":1997,"group":5,"greencolor":"#41ab5d","size":10,"Country":"Russian Federation"},
-{"Id":"Marcos Daniel","Hand":"Right","Weight":"79 kg","Height":"180 cm","Turned Pro":1997,"group":5,"greencolor":"#41ab5d","size":3,"Country":"Brazil"},
-{"Id":"Nicolas Massu","Hand":"Right","Weight":"80 kg","Height":"183 cm","Turned Pro":1997,"group":5,"greencolor":"#41ab5d","size":11,"Country":"Chile"},
-{"Id":"Kevin Kim","Hand":"Right","Weight":"75 kg","Height":"180 cm","Turned Pro":1997,"group":5,"greencolor":"#41ab5d","size":2,"Country":"United States of America"},
-{"Id":"Ivan Ljubicic","Hand":"Right","Weight":"92 kg","Height":"193 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":8,"Country":"Croatia"},
-{"Id":"Jan Hernych","Hand":"Right","Weight":"83 kg","Height":"190 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":4,"Country":"Czech Republic"},
-{"Id":"Juan Carlos Ferrero","Hand":"Right","Weight":"73 kg","Height":"183 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":16,"Country":"Spain"},
-{"Id":"Juan Ignacio Chela","Hand":"Right","Weight":"75 kg","Height":"190 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":12,"Country":"Argentina"},
-{"Id":"Lleyton Hewitt","Hand":"Right","Weight":"77 kg","Height":"180 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":28,"Country":"Australia"},
-{"Id":"Oscar Hernandez","Hand":"Right","Weight":"70 kg","Height":"180 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":4,"Country":"Spain"},
-{"Id":"Roger Federer","Hand":"Right","Weight":"85 kg","Height":"185 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":45,"Country":" Switzerland"},
-{"Id":"Ruben RamirezHidalgo","Hand":"Right","Weight":"74 kg","Height":"183 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":3,"Country":"Spain"},
-{"Id":"Taylor Dent","Hand":"Right","Weight":"88 kg","Height":"188 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":12,"Country":"United States of America"},
-{"Id":"Tommy Robredo","Hand":"Right","Weight":"75 kg","Height":"180 cm","Turned Pro":1998,"group":4,"greencolor":"#74c476","size":23,"Country":"Spain"},
-{"Id":"Albert Montanes","Hand":"Right","Weight":"70 kg","Height":"175 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":7,"Country":"Spain"},
-{"Id":"Bjorn Phau","Hand":"Right","Weight":"70 kg","Height":"175 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":5,"Country":"Germany"},
-{"Id":"Fernando Gonzalez","Hand":"Right","Weight":"82 kg","Height":"183 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":19,"Country":"Chile"},
-{"Id":"Igor Kunitsyn","Hand":"Right","Weight":"75 kg","Height":"180 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":3,"Country":"Russian Federation"},
-{"Id":"James Blake","Hand":"Right","Weight":"83 kg","Height":"185 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":23,"Country":"United States of America"},
-{"Id":"Jose Acasuso","Hand":"Right","Weight":"86 kg","Height":"190 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":12,"Country":"Argentina"},
-{"Id":"Jurgen Melzer","Hand":"Left","Weight":"81 kg","Height":"183 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":12,"Country":"Austria"},
-{"Id":"Marc Gicquel","Hand":"Right","Weight":"75 kg","Height":"188 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":7,"Country":"France"},
-{"Id":"Martin Vassallo Arguello","Hand":"Right","Weight":"80 kg","Height":"183 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":3,"Country":"Argentina"},
-{"Id":"Michael Berrer","Hand":"Left","Weight":"100 kg","Height":"193 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":4,"Country":"Germany"},
-{"Id":"Michael Llodra","Hand":"Left","Weight":"80 kg","Height":"190 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":9,"Country":"France"},
-{"Id":"Mikhail Youzhny","Hand":"Right","Weight":"73 kg","Height":"183 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":13,"Country":"Russian Federation"},
-{"Id":"Nikolay Davydenko","Hand":"Right","Weight":"70 kg","Height":"178 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":24,"Country":"Russian Federation"},
-{"Id":"Olivier Rochus","Hand":"Right","Weight":"65 kg","Height":"168 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":12,"Country":"Belgium"},
-{"Id":"PaulHenri Mathieu","Hand":"Right","Weight":"74 kg","Height":"185 cm","Turned Pro":1999,"group":4,"greencolor":"#74c476","size":9,"Country":"France"},
-{"Id":"Alejandro Falla","Hand":"Left","Weight":"77 kg","Height":"185 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":1,"Country":"Colombia"},
-{"Id":"Andy Roddick","Hand":"Right","Weight":"88 kg","Height":"188 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":33,"Country":"United States of America"},
-{"Id":"David Ferrer","Hand":"Right","Weight":"73 kg","Height":"175 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":16,"Country":"Spain"},
-{"Id":"Dmitry Tursunov","Hand":"Right","Weight":"82 kg","Height":"185 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":12,"Country":"Russian Federation"},
-{"Id":"Florent Serra","Hand":"Right","Weight":"78 kg","Height":"180 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":8,"Country":"France"},
-{"Id":"Ivo Karlovic","Hand":"Right","Weight":"104 kg","Height":"211 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":11,"Country":"Croatia"},
-{"Id":"Jarkko Nieminen","Hand":"Left","Weight":"78 kg","Height":"185 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":13,"Country":"Finland"},
-{"Id":"Julien Benneteau","Hand":"Right","Weight":"79 kg","Height":"185 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":8,"Country":"France"},
-{"Id":"Marco Chiudinelli","Hand":"Right","Weight":"79 kg","Height":"188 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":4,"Country":"Switzerland"},
-{"Id":"Peter Luczak","Hand":"Right","Weight":"77 kg","Height":"183 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":3,"Country":"Australia"},
-{"Id":"Robert Kendrick","Hand":"Right","Weight":"86 kg","Height":"190 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":7,"Country":"United States of America"},
-{"Id":"Simon Greul","Hand":"Right","Weight":"80 kg","Height":"185 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":3,"Country":"Germany"},
-{"Id":"Victor Hanescu","Hand":"Right","Weight":"88 kg","Height":"198 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":6,"Country":"Romania"},
-{"Id":"Thiago Alves","Hand":"Right","Weight":"75 kg","Height":"178 cm","Turned Pro":2000,"group":4,"greencolor":"#74c476","size":4,"Country":"Brazil"},
-{"Id":"Fernando Verdasco","Hand":"Left","Weight":"88 kg","Height":"188 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":20,"Country":"Spain"},
-{"Id":"Karol Beck","Hand":"Right","Weight":"74 kg","Height":"180 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":6,"Country":"Slovakia"},
-{"Id":"Philipp Kohlschreiber","Hand":"Right","Weight":"70 kg","Height":"178 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":12,"Country":"Germany"},
-{"Id":"Philipp Petzschner","Hand":"Right","Weight":"77 kg","Height":"185 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Germany"},
-{"Id":"Potito Starace","Hand":"Right","Weight":"84 kg","Height":"188 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":5,"Country":"Italy"},
-{"Id":"Rafael Nadal","Hand":"Left","Weight":"85 kg","Height":"185 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":28,"Country":"Spain"},
-{"Id":"Robby Ginepri","Hand":"Right","Weight":"79 kg","Height":"183 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":20,"Country":"United States of America"},
-{"Id":"Robin Soderling","Hand":"Right","Weight":"87 kg","Height":"193 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":10,"Country":"Sweden"},
-{"Id":"YenHsun Lu","Hand":"Right","Weight":"74 kg","Height":"180 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Taiwan"},
-{"Id":"Dieter Kindlmann","Hand":"Right","Weight":"71 kg","Height":"183 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":1,"Country":"Germany"},
-{"Id":"Ivan Navarro","Hand":"Right","Weight":"86 kg","Height":"183 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Spain"},
-{"Id":"JuanPablo Brzezicki","Hand":"Right","Weight":"72 kg","Height":"178 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":1,"Country":"Argentina"},
-{"Id":"Teimuraz Gabashvili","Hand":"Right","Weight":"83 kg","Height":"188 cm","Turned Pro":2001,"group":3,"greencolor":"#a1d99b","size":6,"Country":"Russian Federation"},
-{"Id":"Andreas Seppi","Hand":"Right","Weight":"75 kg","Height":"190 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":7,"Country":"Italy"},
-{"Id":"Dudi Sela","Hand":"Right","Weight":"65 kg","Height":"175 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":3,"Country":"Israel"},
-{"Id":"Gilles Simon","Hand":"Right","Weight":"70 kg","Height":"183 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":8,"Country":"France"},
-{"Id":"Giovanni Lapentti","Hand":"Right","Weight":"91 kg","Height":"193 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":1,"Country":"Ecuador"},
-{"Id":"Guillermo GarciaLopez","Hand":"Right","Weight":"82 kg","Height":"188 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":5,"Country":"Spain"},
-{"Id":"Igor Andreev","Hand":"Right","Weight":"80 kg","Height":"185 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":8,"Country":"Russian Federation"},
-{"Id":"Janko Tipsarevic","Hand":"Right","Weight":"80 kg","Height":"180 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":5,"Country":"Serbia"},
-{"Id":"Juan Monaco","Hand":"Right","Weight":"81 kg","Height":"185 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":7,"Country":"Argentina"},
-{"Id":"Maximo Gonzalez","Hand":"Right","Weight":"70 kg","Height":"175 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":3,"Country":"Argentina"},
-{"Id":"Paul Capdeville","Hand":"Right","Weight":"78 kg","Height":"190 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":5,"Country":"Chile"},
-{"Id":"Richard Gasquet","Hand":"Right","Weight":"75 kg","Height":"185 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":10,"Country":"France"},
-{"Id":"Rui Machado","Hand":"Right","Weight":"65 kg","Height":"178 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":3,"Country":"Portugal"},
-{"Id":"Stanislas Wawrinka","Hand":"Right","Weight":"81 kg","Height":"183 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":11,"Country":"Switzerland"},
-{"Id":"Tomas Berdych","Hand":"Right","Weight":"91 kg","Height":"196 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":19,"Country":"Czech Republic"},
-{"Id":"Daniel Koellerer","Hand":"Right","Weight":"80 kg","Height":"180 cm","Turned Pro":2002,"group":3,"greencolor":"#a1d99b","size":3,"Country":"Austria"},
-{"Id":"Andreas Beck","Hand":"Left","Weight":"90 kg","Height":"190 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Germany"},
-{"Id":"Flavio Cipolla","Hand":"Right","Weight":"74 kg","Height":"173 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Italy"},
-{"Id":"Horacio Zeballos","Hand":"Left","Weight":"83 kg","Height":"188 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":2,"Country":"Argentina"},
-{"Id":"Leonardo Mayer","Hand":"Right","Weight":"83 kg","Height":"188 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":2,"Country":"Argentina"},
-{"Id":"Marcel Granollers","Hand":"Right","Weight":"77 kg","Height":"190 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":3,"Country":"Spain"},
-{"Id":"Nicolas Almagro","Hand":"Right","Weight":"84 kg","Height":"183 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":10,"Country":"Spain"},
-{"Id":"Novak Djokovic","Hand":"Right","Weight":"80 kg","Height":"188 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":25,"Country":"Serbia"},
-{"Id":"Sergiy Stakhovsky","Hand":"Right","Weight":"80 kg","Height":"193 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":1,"Country":"Ukraine"},
-{"Id":"Steve Darcis","Hand":"Right","Weight":"73 kg","Height":"178 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Belgium"},
-{"Id":"Victor Crivoi","Hand":"Right","Weight":"75 kg","Height":"185 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":1,"Country":"Romania"},
-{"Id":"Chris Guccione","Hand":"Left","Weight":"92 kg","Height":"201 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Australia"},
-{"Id":"Frederico Gil","Hand":"Right","Weight":"70 kg","Height":"178 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":2,"Country":"Portugal"},
-{"Id":"Michael Yani","Hand":"Right","Weight":"75 kg","Height":"185 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":1,"Country":"United States of America"},
-{"Id":"Simone Bolelli","Hand":"Right","Weight":"79 kg","Height":"183 cm","Turned Pro":2003,"group":3,"greencolor":"#a1d99b","size":4,"Country":"Italy"},
-{"Id":"Daniel GimenoTraver","Hand":"Right","Weight":"80 kg","Height":"183 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":1,"Country":"Spain"},
-{"Id":"Denis Istomin","Hand":"Right","Weight":"88 kg","Height":"188 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":3,"Country":"Uzbekistan"},
-{"Id":"Donald Young","Hand":"Left","Weight":"79 kg","Height":"183 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":6,"Country":"United States of America"},
-{"Id":"Ernests Gulbis","Hand":"Right","Weight":"85 kg","Height":"190 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":6,"Country":"Latvia"},
-{"Id":"Fabio Fognini","Hand":"Right","Weight":"74 kg","Height":"178 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"Italy"},
-{"Id":"Gael Monfils","Hand":"Right","Weight":"80 kg","Height":"193 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":10,"Country":"France"},
-{"Id":"Josselin Ouanna","Hand":"Right","Weight":"91 kg","Height":"193 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"France"},
-{"Id":"JoWilfried Tsonga","Hand":"Right","Weight":"91 kg","Height":"188 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":10,"Country":"France"},
-{"Id":"Pablo Cuevas","Hand":"Right","Weight":"80 kg","Height":"180 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":4,"Country":"Uruguay"},
-{"Id":"Rajeev Ram","Hand":"Right","Weight":"82 kg","Height":"193 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"United States of America"},
-{"Id":"Wayne Odesnik","Hand":"Left","Weight":"77 kg","Height":"180 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":6,"Country":"United States of America"},
-{"Id":"Brendan Evans","Hand":"Right","Weight":"91 kg","Height":"188 cm","Turned Pro":2004,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"United States of America"},
-{"Id":"Andrey Golubev","Hand":"Right","Weight":"77 kg","Height":"185 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":3,"Country":"Kazakhstan"},
-{"Id":"Andy Murray","Hand":"Right","Weight":"84 kg","Height":"190 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":20,"Country":"United Kingdom"},
-{"Id":"Benjamin Becker","Hand":"Right","Weight":"72 kg","Height":"178 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":5,"Country":"Germany"},
-{"Id":"Jeremy Chardy","Hand":"Right","Weight":"75 kg","Height":"188 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":3,"Country":"France"},
-{"Id":"Juan Martin Del Potro","Hand":"Right","Weight":"97 kg","Height":"198 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":15,"Country":"Argentina"},
-{"Id":"Marin Cilic","Hand":"Right","Weight":"82 kg","Height":"198 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":8,"Country":"Croatia"},
-{"Id":"Thomaz Bellucci","Hand":"Left","Weight":"82 kg","Height":"188 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":4,"Country":"Brazil"},
-{"Id":"Carsten Ball","Hand":"Left","Weight":"91 kg","Height":"198 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":3,"Country":"Australia"},
-{"Id":"Evgeny Korolev","Hand":"Right","Weight":"82 kg","Height":"185 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":4,"Country":"Kazakhstan"},
-{"Id":"Jesse Witten","Hand":"Right","Weight":"82 kg","Height":"178 cm","Turned Pro":2005,"group":2,"greencolor":"#c7e9c0","size":3,"Country":"United States of America"},
-{"Id":"Marsel Ilhan","Hand":"Right","Weight":"78 kg","Height":"190 cm","Turned Pro":2006,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"Turkey"},
-{"Id":"Peter Polansky","Hand":"Right","Weight":"70 kg","Height":"180 cm","Turned Pro":2006,"group":2,"greencolor":"#c7e9c0","size":1,"Country":"Canada"},
-{"Id":"Sam Querrey","Hand":"Right","Weight":"91 kg","Height":"198 cm","Turned Pro":2006,"group":2,"greencolor":"#c7e9c0","size":10,"Country":"United States of America"},
-{"Id":"Viktor Troicki","Hand":"Right","Weight":"86 kg","Height":"193 cm","Turned Pro":2006,"group":2,"greencolor":"#c7e9c0","size":5,"Country":"Serbia"},
-{"Id":"Jesse Levine","Hand":"Left","Weight":"68 kg","Height":"175 cm","Turned Pro":2007,"group":1,"greencolor":"#edf8e9","size":4,"Country":"Canada"},
-{"Id":"John Isner","Hand":"Right","Weight":"108 kg","Height":"208 cm","Turned Pro":2007,"group":1,"greencolor":"#edf8e9","size":8,"Country":"United States of America"},
-{"Id":"Ryan Sweeting","Hand":"Right","Weight":"83 kg","Height":"196 cm","Turned Pro":2007,"group":1,"greencolor":"#edf8e9","size":2,"Country":"United States of America"},
-{"Id":"Somdev Devvarman","Hand":"Right","Weight":"73 kg","Height":"180 cm","Turned Pro":2008,"group":1,"greencolor":"#edf8e9","size":2,"Country":"India"},
-{"Id":"Devin Britton","Hand":"Right","Weight":"84 kg","Height":"193 cm","Turned Pro":2009,"group":1,"greencolor":"#edf8e9","size":1,"Country":"United States of America"},
-{"Id":"Chase Buchanan","Hand":"Right","Weight":"74 kg","Height":"182 cm","Turned Pro":"N/A","group":1,"greencolor":"#edf8e9","size":1,"Country":"United States of America"},
-{"Id":"Mischa Zverev","Hand":"Left","Weight":"81 kg","Height":"190 cm","Turned Pro":2006,"group":2,"greencolor":"#c7e9c0","size":2,"Country":"Germany"}]
-  var connections = [{"source":"Nicolas Kiefer","target":"Michael Llodra","strength":2.586726998,"strength2":50},
-{"source":"Nicolas Lapentti","target":"Stanislas Wawrinka","strength":2.128571429,"strength2":40},
-{"source":"Radek Stepanek","target":"Leonardo Mayer","strength":1.971620227,"strength2":30},
-{"source":"Radek Stepanek","target":"Philipp Kohlschreiber","strength":2.536931818,"strength2":20},
-{"source":"Radek Stepanek","target":"Simone Bolelli","strength":2.452830189,"strength2":10},
-{"source":"Tommy Haas","target":"Alejandro Falla","strength":2.261969904,"strength2":50},
-{"source":"Tommy Haas","target":"Robert Kendrick","strength":2.518082192,"strength2":40},
-{"source":"Kevin Kim","target":"Dudi Sela","strength":2.291502754,"strength2":30},
-{"source":"Jan Hernych","target":"Rainer Schuettler","strength":2.009090909,"strength2":20},
-{"source":"Juan Carlos Ferrero","target":"Fabrice Santoro","strength":2.558797909,"strength2":10},
-{"source":"Juan Carlos Ferrero","target":"Gilles Simon","strength":2.151830986,"strength2":50},
-{"source":"Juan Carlos Ferrero","target":"Philipp Petzschner","strength":2.17604753,"strength2":40},
-{"source":"Juan Ignacio Chela","target":"Oscar Hernandez","strength":2.889705882,"strength2":30},
-{"source":"Lleyton Hewitt","target":"Juan Ignacio Chela","strength":2.820647773,"strength2":20},
-{"source":"Lleyton Hewitt","target":"Thiago Alves","strength":2.94851577,"strength2":10},
-{"source":"Roger Federer","target":"Devin Britton","strength":2.859649123,"strength2":50},
-{"source":"Roger Federer","target":"Lleyton Hewitt","strength":2.021428571,"strength2":40},
-{"source":"Roger Federer","target":"Novak Djokovic","strength":2.276688453,"strength2":30},
-{"source":"Roger Federer","target":"Robin Soderling","strength":2.422526636,"strength2":20},
-{"source":"Roger Federer","target":"Simon Greul","strength":2.36819407,"strength2":10},
-{"source":"Roger Federer","target":"Tommy Robredo","strength":3.103225806,"strength2":50},
-{"source":"Taylor Dent","target":"Feliciano Lopez","strength":2.034117343,"strength2":40},
-{"source":"Taylor Dent","target":"Ivan Navarro","strength":2.083333333,"strength2":30},
-{"source":"Tommy Robredo","target":"Donald Young","strength":2.526426426,"strength2":20},
-{"source":"Tommy Robredo","target":"Guillermo GarciaLopez","strength":2.097959184,"strength2":10},
-{"source":"Tommy Robredo","target":"James Blake","strength":1.981837607,"strength2":50},
-{"source":"Fernando Gonzalez","target":"Josselin Ouanna","strength":2.105263158,"strength2":40},
-{"source":"Fernando Gonzalez","target":"JoWilfried Tsonga","strength":2.288888889,"strength2":30},
-{"source":"Fernando Gonzalez","target":"Nicolas Massu","strength":2.848607367,"strength2":20},
-{"source":"Fernando Gonzalez","target":"Tomas Berdych","strength":2.089954338,"strength2":50},
-{"source":"James Blake","target":"Olivier Rochus","strength":2.272110849,"strength2":40},
-{"source":"James Blake","target":"Ruben RamirezHidalgo","strength":2.492610837,"strength2":30},
-{"source":"Jose Acasuso","target":"David Ferrer","strength":2.237553343,"strength2":20},
-{"source":"Jose Acasuso","target":"Marcos Daniel","strength":2.566780822,"strength2":50},
-{"source":"Jurgen Melzer","target":"Marat Safin","strength":1.981818182,"strength2":40},
-{"source":"Marc Gicquel","target":"Dmitry Tursunov","strength":2.163043478,"strength2":30},
-{"source":"Mikhail Youzhny","target":"PaulHenri Mathieu","strength":2.181240064,"strength2":20},
-{"source":"Nikolay Davydenko","target":"Dieter Kindlmann","strength":2.503174073,"strength2":50},
-{"source":"Nikolay Davydenko","target":"Jan Hernych","strength":2.956140351,"strength2":40},
-{"source":"Nikolay Davydenko","target":"Marco Chiudinelli","strength":2.351851852,"strength2":30},
-{"source":"Olivier Rochus","target":"Igor Kunitsyn","strength":3.038961039,"strength2":20},
-{"source":"Andy Roddick","target":"Bjorn Phau","strength":3.055258467,"strength2":50},
-{"source":"Andy Roddick","target":"Marc Gicquel","strength":2.595628415,"strength2":40},
-{"source":"David Ferrer","target":"Alberto Martin","strength":2.195880622,"strength2":30},
-{"source":"Florent Serra","target":"Janko Tipsarevic","strength":2.19973262,"strength2":20},
-{"source":"Jarkko Nieminen","target":"Fabio Fognini","strength":2.103492063,"strength2":50},
-{"source":"Julien Benneteau","target":"Flavio Cipolla","strength":2.455525606,"strength2":40},
-{"source":"Julien Benneteau","target":"Viktor Troicki","strength":3.093240093,"strength2":30},
-{"source":"Marco Chiudinelli","target":"Mikhail Youzhny","strength":2.283405597,"strength2":20},
-{"source":"Marco Chiudinelli","target":"Potito Starace","strength":2.604545455,"strength2":50},
-{"source":"Robert Kendrick","target":"Martin Vassallo Arguello","strength":3.484351714,"strength2":40},
-{"source":"Simon Greul","target":"Giovanni Lapentti","strength":2.08021978,"strength2":30},
-{"source":"Fernando Verdasco","target":"Benjamin Becker","strength":2.48256538,"strength2":20},
-{"source":"Fernando Verdasco","target":"Florent Serra","strength":3.48015873,"strength2":10},
-{"source":"Fernando Verdasco","target":"John Isner","strength":2.153207547,"strength2":50},
-{"source":"Fernando Verdasco","target":"Tommy Haas","strength":1.841812401,"strength2":40},
-{"source":"Philipp Kohlschreiber","target":"Andreas Seppi","strength":2.480113636,"strength2":30},
-{"source":"Philipp Kohlschreiber","target":"Somdev Devvarman","strength":2.008111616,"strength2":20},
-{"source":"Philipp Petzschner","target":"Sergiy Stakhovsky","strength":2.076923077,"strength2":10},
-{"source":"Rafael Nadal","target":"Fernando Gonzalez","strength":2.700029265,"strength2":10},
-{"source":"Rafael Nadal","target":"Gael Monfils","strength":2.765079365,"strength2":50},
-{"source":"Rafael Nadal","target":"Nicolas Almagro","strength":2.604761905,"strength2":40},
-{"source":"Rafael Nadal","target":"Nicolas Kiefer","strength":3.042857143,"strength2":30},
-{"source":"Rafael Nadal","target":"Richard Gasquet","strength":3.114959469,"strength2":20},
-{"source":"Robby Ginepri","target":"Andrei Pavel","strength":2.259649123,"strength2":10},
-{"source":"Robin Soderling","target":"Albert Montanes","strength":2.640740741,"strength2":10},
-{"source":"Robin Soderling","target":"Marcel Granollers","strength":5.355884426,"strength2":50},
-{"source":"Robin Soderling","target":"Nikolay Davydenko","strength":2.032727273,"strength2":40},
-{"source":"Robin Soderling","target":"Sam Querrey","strength":2.98943662,"strength2":30},
-{"source":"Ivan Navarro","target":"Ivo Karlovic","strength":2.575903614,"strength2":20},
-{"source":"Gilles Simon","target":"Daniel GimenoTraver","strength":2.417797888,"strength2":10},
-{"source":"Gilles Simon","target":"Thomaz Bellucci","strength":2.785964912,"strength2":50},
-{"source":"Guillermo GarciaLopez","target":"Peter Polansky","strength":2.276556777,"strength2":40},
-{"source":"Maximo Gonzalez","target":"Karol Beck","strength":1.867692308,"strength2":30},
-{"source":"Paul Capdeville","target":"Victor Crivoi","strength":2.970081967,"strength2":20},
-{"source":"Tomas Berdych","target":"Horacio Zeballos","strength":2.295833333,"strength2":50},
-{"source":"Tomas Berdych","target":"Wayne Odesnik","strength":2.46115576,"strength2":40},
-{"source":"Daniel Koellerer","target":"Pablo Cuevas","strength":2.181788405,"strength2":30},
-{"source":"Daniel Koellerer","target":"Rui Machado","strength":2.182438193,"strength2":20},
-{"source":"Andreas Beck","target":"Evgeny Korolev","strength":2.128779395,"strength2":50},
-{"source":"Horacio Zeballos","target":"Michael Berrer","strength":2.235294118,"strength2":40},
-{"source":"Leonardo Mayer","target":"Andrey Golubev","strength":2.190891473,"strength2":30},
-{"source":"Marcel Granollers","target":"Mischa Zverev","strength":2.033442982,"strength2":20},
-{"source":"Nicolas Almagro","target":"Robby Ginepri","strength":2.122027972,"strength2":50},
-{"source":"Nicolas Almagro","target":"Steve Darcis","strength":2.078375286,"strength2":40},
-{"source":"Novak Djokovic","target":"Carsten Ball","strength":2.678095238,"strength2":30},
-{"source":"Novak Djokovic","target":"Fernando Verdasco","strength":2.091485507,"strength2":20},
-{"source":"Novak Djokovic","target":"Ivan Ljubicic","strength":2.861325116,"strength2":10},
-{"source":"Novak Djokovic","target":"Jesse Witten","strength":2.035497282,"strength2":20},
-{"source":"Novak Djokovic","target":"Radek Stepanek","strength":2.745073375,"strength2":50},
-{"source":"Denis Istomin","target":"Brendan Evans","strength":2.052669553,"strength2":40},
-{"source":"Denis Istomin","target":"Nicolas Lapentti","strength":2.05258216,"strength2":30},
-{"source":"Gael Monfils","target":"Andreas Beck","strength":2.277777778,"strength2":20},
-{"source":"Gael Monfils","target":"Jeremy Chardy","strength":2.731485688,"strength2":10},
-{"source":"Gael Monfils","target":"Jose Acasuso","strength":2.379166667,"strength2":50},
-{"source":"Josselin Ouanna","target":"Rajeev Ram","strength":2.275252525,"strength2":40},
-{"source":"JoWilfried Tsonga","target":"Chase Buchanan","strength":4.400641026,"strength2":30},
-{"source":"JoWilfried Tsonga","target":"Jarkko Nieminen","strength":2.37891804,"strength2":20},
-{"source":"JoWilfried Tsonga","target":"Julien Benneteau","strength":2.334041988,"strength2":10},
-{"source":"Pablo Cuevas","target":"Chris Guccione","strength":2.465709729,"strength2":50},
-{"source":"Andy Murray","target":"Ernests Gulbis","strength":2.585812357,"strength2":40},
-{"source":"Andy Murray","target":"Paul Capdeville","strength":2.451730419,"strength2":30},
-{"source":"Andy Murray","target":"Taylor Dent","strength":3.056770395,"strength2":20},
-{"source":"Juan Martin Del Potro","target":"Daniel Koellerer","strength":2.429144385,"strength2":10},
-{"source":"Juan Martin Del Potro","target":"Juan Carlos Ferrero","strength":2.325714286,"strength2":20},
-{"source":"Juan Martin Del Potro","target":"Juan Monaco","strength":3.192886457,"strength2":50},
-{"source":"Juan Martin Del Potro","target":"Jurgen Melzer","strength":2.440729483,"strength2":40},
-{"source":"Juan Martin Del Potro","target":"Marin Cilic","strength":2.350532351,"strength2":30},
-{"source":"Juan Martin Del Potro","target":"Rafael Nadal","strength":2.752631579,"strength2":20},
-{"source":"Juan Martin Del Potro","target":"Roger Federer","strength":2.010311871,"strength2":10},
-{"source":"Marin Cilic","target":"Andy Murray","strength":2.330769231,"strength2":40},
-{"source":"Marin Cilic","target":"Denis Istomin","strength":2.840329835,"strength2":30},
-{"source":"Marin Cilic","target":"Jesse Levine","strength":2.366424536,"strength2":20},
-{"source":"Marin Cilic","target":"Ryan Sweeting","strength":2.485558158,"strength2":10},
-{"source":"Thomaz Bellucci","target":"YenHsun Lu","strength":2.379874214,"strength2":50},
-{"source":"Carsten Ball","target":"JuanPablo Brzezicki","strength":2.173699915,"strength2":40},
-{"source":"Jesse Witten","target":"Igor Andreev","strength":3.064083458,"strength2":30},
-{"source":"Jesse Witten","target":"Maximo Gonzalez","strength":2.298418972,"strength2":20},
-{"source":"Marsel Ilhan","target":"Christophe Rochus","strength":1.952307692,"strength2":10},
-{"source":"Sam Querrey","target":"Kevin Kim","strength":2.071481757,"strength2":20},
-{"source":"Sam Querrey","target":"Michael Yani","strength":2.372881356,"strength2":10},
-{"source":"Viktor Troicki","target":"Peter Luczak","strength":2.002612482,"strength2":50},
-{"source":"Jesse Levine","target":"Teimuraz Gabashvili","strength":2.822033898,"strength2":40},
-{"source":"John Isner","target":"Andy Roddick","strength":1.916236374,"strength2":30},
-{"source":"John Isner","target":"Marsel Ilhan","strength":2.285962302,"strength2":20},
-{"source":"John Isner","target":"Victor Hanescu","strength":2.166666667,"strength2":10},
-{"source":"Somdev Devvarman","target":"Frederico Gil","strength":2.390374332,"strength2":10}]
+function chart(csvpath, color) {
 
-  var visualization = d3plus.viz()
-    .container("#viz")
-    .type("rings")
-    .data(sample_data)
-    .id("Id")
-    .size("size")
-    .color("greencolor")
-    .edges({
-        
-        "value": connections, 
-			  "arrows":true,
-         "label":"strength"       
-          })
-    .shape("circle")
-    .focus("Juan Martin Del Potro")
-    .tooltip(["Country","Handness","Weight","Height","Turned Pro"])
-    .style({
-      "legend": {
-        "size": 20,
-        
+if (color == "blue") {
+  colorrange = ["#045A8D", "#2B8CBE", "#74A9CF", "#A6BDDB", "#D0D1E6", "#F1EEF6"];
+}
+else if (color == "pink") {
+  colorrange = ["#980043", "#DD1C77", "#DF65B0", "#C994C7", "#D4B9DA", "#F1EEF6"];
+}
+else if (color == "orange") {
+  colorrange = ["#045A8D", "#2B8CBE", "#74A9CF", "#A6BDDB", "#D0D1E6", "#F1EEF6", "#FDD49E", "#FDBB84", "#FC8D59","#E34A33"];
+}
+strokecolor = colorrange[0];
+
+var format = d3.time.format("%m/%d/%y");
+
+var margin = {top: 150, right: 200, bottom: 40, left: 30};
+var width = document.body.clientWidth - margin.left - margin.right;
+var height = 700 - margin.top - margin.bottom;
+
+var tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "remove")
+    .style("position", "absolute")
+    .style("z-index", "20")
+    .style("visibility", "hidden")
+    .style("top", "30px")
+    .style("left", "55px");
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height-10, 0]);
+
+var z = d3.scale.ordinal()
+    .range(colorrange);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(d3.time.weeks);
+
+var yAxis = d3.svg.axis()
+    .scale(y);
+
+var yAxisr = d3.svg.axis()
+    .scale(y);
+
+var stack = d3.layout.stack()
+    .offset("silhouette")
+    .values(function(d) { return d.values; })
+    .x(function(d) { return d.date; })
+    .y(function(d) { return d.value; });
+
+var nest = d3.nest()
+    .key(function(d) { return d.key; });
+
+var area = d3.svg.area()
+    .interpolate("cardinal")
+    .x(function(d) { return x(d.date); })
+    .y0(function(d) { return y(d.y0); })
+    .y1(function(d) { return y(d.y0 + d.y); });
+
+var svg = d3.select(".chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var graph = d3.csv(csvpath, function(data) {
+  data.forEach(function(d) {
+    d.date = format.parse(d.date);
+    d.value = +d.value;
+  });
+
+  var layers = stack(nest.entries(data));
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.y0 + d.y; })]);
+
+  svg.selectAll(".layer")
+      .data(layers)
+    .enter().append("path")
+      .attr("class", "layer")
+      .attr("d", function(d) { return area(d.values); })
+      .style("fill", function(d, i) { return z(i); });
+
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + width + ", 0)")
+      .call(yAxis.orient("right"));
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis.orient("left"));
+
+  svg.selectAll(".layer")
+    .attr("opacity", 1)
+    .on("mouseover", function(d, i) {
+      svg.selectAll(".layer").transition()
+      .duration(250)
+      .attr("opacity", function(d, j) {
+        return j != i ? 0.6 : 1;
+    })})
+
+    .on("mousemove", function(d, i) {
+      mousex = d3.mouse(this);
+      mousex = mousex[0];
+      var invertedx = x.invert(mousex);
+      invertedx = invertedx.getMonth() + invertedx.getDate();
+      var selected = (d.values);
+      for (var k = 0; k < selected.length; k++) {
+        datearray[k] = selected[k].date
+        datearray[k] = datearray[k].getMonth() + datearray[k].getDate();
       }
+
+      mousedate = datearray.indexOf(invertedx);
+      pro = d.values[mousedate].value;
+
+      d3.select(this)
+      .classed("hover", true)
+      .attr("stroke", strokecolor)
+      .attr("stroke-width", "0.5px"), 
+      tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "visible");
+      
     })
-	.title("How Del Potro Stunned the World in the 2009 US Open")
-     .title({
-      "sub": "A Ring Network Analysis of 2009 US Open Champion Juan Martin Del Potro and His Opponents",
-    })
-    .footer("Data Source: 2009 US Open")
-    .history(true)
-    .draw() 
-</script>
-</body>
-</html>
+    .on("mouseout", function(d, i) {
+     svg.selectAll(".layer")
+      .transition()
+      .duration(250)
+      .attr("opacity", "1");
+      d3.select(this)
+      .classed("hover", false)
+      .attr("stroke-width", "0px"), tooltip.html( "<p>" + d.key + "<br>" + pro + "</p>" ).style("visibility", "hidden");
+  })
+    
+  var vertical = d3.select(".chart")
+        .append("div")
+        .attr("class", "remove")
+        .style("position", "absolute")
+        .style("z-index", "19")
+        .style("width", "1px")
+        .style("height", "380px")
+        .style("top", "10px")
+        .style("bottom", "30px")
+        .style("left", "0px")
+        .style("background", "#fff");
+
+  d3.select(".chart")
+      .on("mousemove", function(){  
+         mousex = d3.mouse(this);
+         mousex = mousex[0] + 5;
+         vertical.style("left", mousex + "px" )})
+      .on("mouseover", function(){  
+         mousex = d3.mouse(this);
+         mousex = mousex[0] + 5;
+         vertical.style("left", mousex + "px")});
+});
+}
+</script> -->
+
+keywords:
+fiscal cliff，dec ，timeline photos      ，      para          ，  holiday season ，               
+veterans          ，       energy      ，    soldiers           ，  pearl harbor ，   prayers 
+
