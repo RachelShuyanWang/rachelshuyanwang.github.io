@@ -302,6 +302,22 @@
 		color: #6F6F6F#;
 	}
 
+	.title2 h3
+	{
+		margin-top:3em; margin-bottom:0.5em; margin-left: 180px; color: rgba(0,0,0,0.8);
+	}
+
+
+	.title3	h4
+	{
+		margin-top:2em; margin-bottom:0.5em; margin-left: 180px; margin-right: 110px; color: rgba(0,0,0,0.6); 
+	}
+
+	.title5	h4
+	{
+		margin-top:0em; margin-bottom:0em; margin-left: 180px; margin-right: 110px; color: rgba(0,0,0,0.8); 
+	}
+
 
 /*********************************************************************************/
 /* Header                                                                        */
@@ -409,6 +425,17 @@
 	{
 		padding-top: 5em;
 	}
+
+/*********************************************************************************/
+/* Banner2   # For branch pages                                                                     */
+/*********************************************************************************/
+
+	#banner2
+	{
+		padding-top: 0px;
+	}
+
+
 
 /*********************************************************************************/
 /* Wrapper                                                                       */
