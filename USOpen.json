@@ -45,7 +45,7 @@
       {"name": "Feliciano Lopez", "size": 12, "count":0.662},
       {"name": "Fernando Verdasco", "size": 19, "count":0.645},
       {"name": "Juan Carlos Ferrero (Spain)", "size": 13, "count":0.692},
-      {"name": "Rafael Nadal", "size": 30, "count":0.767},
+      {"name": "Rafael Nadal", "size": 30, "count":0.767, "intro":"Testabcd"},
       {"name": "Tommy Robredo", "size": 20, "count":0.648}
      ]
     },

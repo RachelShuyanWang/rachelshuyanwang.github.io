@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<link type="text/css" rel="stylesheet" href="style.css"/>
+<link type="text/css" rel="stylesheet" href="USOpen.css"/>
 
 
 <style>
@@ -39,8 +39,8 @@ form {
 
 <!-- define label, link it with data -->
 <form>
-  <label><input type="radio" name="mode" value="size" checked> Winnings</label>
-  <label><input type="radio" name="mode" value="count"> Nets</label>
+  <label><input type="radio" name="mode" value="size" checked><i> Winnings</i></label>
+  <label><input type="radio" name="mode" value="count"> <i STYLE="margin-right:300px;">Nets</i></label>
 </form>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -65,7 +65,7 @@ var div = d3.select("body").append("div")
     .style("top", margin.top + "px");
 
 //Let's throw our data flare.json in this Treemap, in D3 hierachical structure all name with parent&name
-d3.json("flare.json", function(error, root) {
+d3.json("USOpen.json", function(error, root) {
   var node = div.datum(root).selectAll(".node")
       .data(treemap.nodes)
     .enter().append("div")
@@ -95,6 +95,8 @@ d3.json("flare.json", function(error, root) {
 
 
 
+
+
 function position() {
   this.style("left", function(d) { return d.x + "px"; })
       .style("top", function(d) { return d.y + "px"; })
@@ -106,7 +108,7 @@ function position() {
 
 // add mouseover and then mouseout 
 function mouseover(d) {
-        d3.select(this).text(function (d) { return  d.name + "\nNet/Win: " + d.count + "/" + d.size; });
+        d3.select(this).text(function (d) { return  d.name + "\nNet/Win: " + d.count + "/" + d.size});
     }
 function mouseout(d) {
         d3.select(this).text(function (d) { return d.name });
