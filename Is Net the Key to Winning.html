@@ -39,16 +39,25 @@ form {
 
 <!-- define label, link it with data -->
 <form>
-  <label><input type="radio" name="mode" value="size" checked><i> Winnings</i></label>
-  <label><input type="radio" name="mode" value="count"> <i STYLE="margin-right:300px;">Nets</i></label>
+  <label><input type="radio" name="mode" value="size" checked><i STYLE="font-size:1.2em;"> Winnings</i></label>
+  <label><input type="radio" name="mode" value="count"> <i STYLE="margin-right:300px; font-size:1.2em;">Nets</i></label>
 </form>
 
+<p STYLE="color:#2056ac; font-size:1em; margin-left:0px; font-family: 'Questrial', sans-serif; float:top;">Back to <a href="index.html">Homepage</a> or <a href="dataminecraft.html">Data Minecraft</a></p>
+
+<img src="images/tennis.jpg" width="50" height="50" STYLE="float:right; margin-right:170px; margin-top:20px;"><a STYLE="float:right;margin-top:33px; margin-right:-170px;color:#2056ac;font-size:1.5em; font-family:Arial;"><i>Description</i></a>
+
+<div>
+<p STYLE="float:right;margin-top:10px; margin-right:-40px; margin-left:900px;color:rgba(0,0,0,1);font-size:1.15em; font-family:Arial;">In Tennis, it’s certainly true that a skilled player could win more points by moving forward. But when pros don’t emphasize that part of their game and they gain little match experience approaching the net, do they have the skills necessary to take advantage of such an opportunity? <br></br>To better show if <a href="http://heavytopspin.com/2014/01/18/should-wta-players-approach-the-net-more/">approaching the net</a> is a winning strategy in practice, this visualization utilized the data of top 30 dominent men players in US Open in ten years (from 2003 to 2013) to make an <b>interactive and comparable Treemap</b>. The size of a rectangle represents the winning/nets data of corresponding player. <a STYLE="color:#FF7F50">By checking label <i>"Winnings"</i> or <i>"Nets"</i></a>, you are able to compare if approaching net will bring points.  <a STYLE="color:#FF7F50">Mouse over a player's rectangle</a> will show data tag.</p>
+
+
+</div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
-var margin = {top: 40, right: 300, bottom: 20, left: 10},
+var margin = {top: 10, right: 280, bottom: 10, left: -10},
     width = 1160 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    height = 650 - margin.top - margin.bottom;
 
 var color = d3.scale.category20c();
 
